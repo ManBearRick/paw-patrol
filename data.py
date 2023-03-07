@@ -16,31 +16,31 @@ def get_page_elements(url: str) -> element.ResultSet:
 
 def get_elements(
     elements: element.ResultSet,
-    first_header: str, 
-    element_type: str) -> list:
+    header: str, 
+    element_type: str) -> list[str]:
     
-    first_header_loc = PAGE_SECTIONS.index(first_header)
-    second_header = PAGE_SECTIONS[first_header_loc + 1]
+    header_loc = PAGE_SECTIONS.index(header)
+    next_header = PAGE_SECTIONS[header_loc + 1]
     first_next_elements = None
     second_prev_elements = None
     
     for element in elements:
-        if element.text == first_header:
+        if element.text == header:
             first_next_elements = element.find_all_next(element_type)
-        if element.text == second_header:
+        if element.text == next_header:
             second_prev_elements = element.find_all_previous(element_type)
     if first_next_elements is None:
-        raise ValueError(f'Section value of {first_header} not found in the provided elements')
+        raise ValueError(f'Section value of {header} not found in the provided elements')
         
     if second_prev_elements is None:
-        for i in range(first_header_loc+1, len(PAGE_SECTIONS)):
+        for i in range(header_loc+1, len(PAGE_SECTIONS)):
             next_header = PAGE_SECTIONS[i]
             for element in elements:
                 if element.text == next_header:
                     second_prev_elements = element.find_all_previous(element_type)
                     break
     if second_prev_elements is None:
-        raise ValueError('Could not locate next section for `first_header`') 
+        raise ValueError('Could not locate next section for `header`') 
                 
     between_elements = []
     for element in first_next_elements:
